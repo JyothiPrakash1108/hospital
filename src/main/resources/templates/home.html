@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>AIMS - Arundathi Institute of Medical Sciences</title>
+    <link rel="icon" th:href="@{/images/logo.png}" type="image/png">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+<nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
+    <div class="container-fluid">
+        <!-- Logo in the center -->
+        <a class="navbar-brand mx-auto" th:href="@{/}">
+            <img th:src="@{/images/logo.png}" alt="Logo" width="50" height="50" class="d-inline-block align-text-top">
+            <span class="fw-bold text-dark">My Website</span>
+        </a>
+
+        <!-- Mobile Toggle Button -->
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <!-- Navbar Links -->
+        <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link active px-4" th:href="@{/}">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4" th:href="@{/about}">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4" th:href="@{/services}">Services</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link px-4" th:href="@{/contact}">Contact</a>
+                </li>
+            </ul>
+        </div>
+
+        <!-- Login Buttons (Top Right) -->
+        <div class="d-flex">
+            <a th:href="@{/doctor/login}" class="btn btn-outline-dark fw-bold me-2">Doctor Login</a>
+            <a th:href="@{/patient/login}" class="btn btn-outline-dark fw-bold me-2">Patient Login</a>
+            <a th:href="@{/admin/login}" class="btn btn-outline-dark fw-bold">Admin Login</a>
+        </div>
+    </div>
+</nav>
+</body>
+</html>

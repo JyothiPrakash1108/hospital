@@ -1,0 +1,29 @@
+body {
+    background-color: white;
+}
+
+.navbar {
+    padding: 10px 20px;
+    border-bottom: 2px solid #f8f9fa;
+}
+
+.navbar-nav .nav-link {
+    font-size: 18px; /* Make options larger */
+    font-weight: 500;
+    color: #333 !important;
+}
+
+.navbar-brand img {
+    border-radius: 50%; /* Optional: round logo */
+}
+
+.navbar-brand {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.btn-outline-dark {
+    font-size: 16px;
+    font-weight: bold;
+    border-width: 2px;
+}
