@@ -12,10 +12,6 @@ import lombok.Setter;
 import java.time.LocalDateTime;
 
 @Entity
-@Setter
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
 public class OTP {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

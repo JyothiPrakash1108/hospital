@@ -2,6 +2,7 @@ package com.aims.hospital.controller;
 
 import com.aims.hospital.model.OTP;
 import com.aims.hospital.model.Patient;
+import com.aims.hospital.service.EmailService;
 import com.aims.hospital.service.OtpService;
 import com.aims.hospital.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,10 +16,12 @@ public class PatientController {
 
     private PatientService patientService;
     private OtpService otpService;
+    private EmailService emailService;
     @Autowired
-    public PatientController(PatientService patientService,OtpService otpService){
+    public PatientController(PatientService patientService,OtpService otpService,EmailService emailService){
         this.patientService = patientService;
         this.otpService = otpService;
+        this.emailService = emailService;
     }
 
     @GetMapping("/login")
@@ -40,15 +43,19 @@ public class PatientController {
             return "patient/login";
         }
         String otp = otpService.generateOtp();
+        emailService.sendEmail(patient.getEmail(),otp);
         otpService.saveOtp(otp,patient.getEmail());
+        patientService.addPatient(patient);
         model.addAttribute("email",patient.getEmail());
         return "patient/verify";
     }
 
-    @PostMapping("/verify-otp")
+    @PostMapping("/verification")
     public String otpVerification(@RequestParam String email,@RequestParam String otp,Model model){
         Patient patient = patientService.findPatientByEmail(email);
         OTP otp1 = otpService.fetchByEmail(email);
+        System.out.println(patient.getName());
+        System.out.println(otp1.getOtp());
         if (otpService.validateOtp(otp,email)){
             patient.setVerified(true);
             otpService.deleteRecord(otp1);

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
+@Transactional
 public class PatientService implements PatientServiceInterface{
     private PatientRepo patientRepo;
     @Autowired
@@ -15,7 +16,6 @@ public class PatientService implements PatientServiceInterface{
     }
 
     @Override
-    @Transactional
     public Patient addPatient(Patient patient) {
         return patientRepo.save(patient);
     }

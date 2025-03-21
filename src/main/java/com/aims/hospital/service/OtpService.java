@@ -4,11 +4,13 @@ import com.aims.hospital.model.OTP;
 import com.aims.hospital.repository.OtpRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
 
 @Service
+@Transactional
 public class OtpService implements OtpServiceInterface{
 
     private OtpRepo otpRepo;

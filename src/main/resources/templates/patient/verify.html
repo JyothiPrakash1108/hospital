@@ -44,8 +44,8 @@
   <div th:if="${error}" class="message" th:text="${error}"></div>
   <div th:if="${message}" class="message" th:text="${message}"></div>
 
-  <form th:action="@{/verify-otp}" method="post">
-    <input type="hidden" name="email" th:value="${email}">
+  <form th:action="@{/patient/verification}" method="post">
+  <input type="hidden" name="email" th:value="${email}">
     <div class="mb-3">
       <label>Enter OTP:</label>
       <input type="text" class="form-control" name="otp" required>
