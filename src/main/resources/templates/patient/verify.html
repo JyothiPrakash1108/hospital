@@ -27,12 +27,23 @@
             font-weight: bold;
             color: black;
         }
+        .message {
+            text-align: center;
+            font-weight: bold;
+            color: black;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
   <h2 class="text-center text-primary">OTP Verification</h2>
+
+  <!-- Display Error or Success Message as Normal Text -->
+  <div th:if="${error}" class="message" th:text="${error}"></div>
+  <div th:if="${message}" class="message" th:text="${message}"></div>
+
   <form th:action="@{/verify-otp}" method="post">
     <input type="hidden" name="email" th:value="${email}">
     <div class="mb-3">
@@ -41,6 +52,12 @@
     </div>
     <button type="submit" class="btn btn-primary w-100">Verify OTP</button>
   </form>
+
+  <!-- Resend OTP Link -->
+  <div class="text-center mt-3">
+    <p>Didn't receive OTP?</p>
+    <a th:href="@{/resend-otp(email=${email})}" class="btn btn-link">Resend OTP</a>
+  </div>
 </div>
 
 </body>

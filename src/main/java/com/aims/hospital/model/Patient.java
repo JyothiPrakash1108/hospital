@@ -23,6 +23,15 @@ public class Patient {
     private int age;
     @Enumerated(EnumType.STRING)
     private Gender gender;
+    private boolean isVerified = false;
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
 
     public int getId() {
         return id;

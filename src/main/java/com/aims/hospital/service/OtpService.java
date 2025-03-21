@@ -37,4 +37,14 @@ public class OtpService implements OtpServiceInterface{
         return false;
     }
 
+    @Override
+    public OTP fetchByEmail(String email) {
+        return otpRepo.findByEmail(email);
+    }
+
+    @Override
+    public void deleteRecord(OTP otp) {
+         otpRepo.delete(otp);
+    }
+
 }
