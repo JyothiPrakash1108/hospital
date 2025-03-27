@@ -31,40 +31,62 @@
             font-weight: bold;
             color: black;
         }
+        .error-message {
+            color: red;
+            font-weight: bold;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
   <h2 class="text-center text-primary">Patient Registration</h2>
-  <form th:action="@{/patient/register}" method="post" th:object="${patient}">
+
+  <!-- Error Message Placeholder -->
+  <p th:if="${error}" class="error-message text-center" th:text="${error}" style="display:block;"></p>
+
+  <form th:action="@{/auth/register}" method="post" th:object="${patient}">
     <div class="mb-3">
       <label>Name:</label>
-      <input type="text" class="form-control" th:field="*{name}" required>
+      <input type="text" class="form-control" th:field="*{username}" required>
+      <p class="error-message" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></p>
     </div>
+
     <div class="mb-3">
       <label>Email:</label>
       <input type="email" class="form-control" th:field="*{email}" required>
+      <p class="error-message" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></p>
     </div>
+
     <div class="mb-3">
       <label>Password:</label>
       <input type="password" class="form-control" th:field="*{password}" required>
+      <p style="color:red">password should be atleast 10 characters long</p>
+      <p class="error-message" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></p>
     </div>
+
     <div class="mb-3">
       <label>Phone Number:</label>
       <input type="text" class="form-control" th:field="*{phoneNumber}" required>
+      <p class="error-message" th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}"></p>
     </div>
+
     <div class="mb-3">
       <label>Age:</label>
       <input type="number" class="form-control" th:field="*{age}" required>
+      <p class="error-message" th:if="${#fields.hasErrors('age')}" th:errors="*{age}"></p>
     </div>
+
     <div class="mb-3">
       <label>Gender:</label>
       <select class="form-control" th:field="*{gender}">
         <option value="MALE">Male</option>
         <option value="FEMALE">Female</option>
       </select>
+      <p class="error-message" th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}"></p>
     </div>
+
     <button type="submit" class="btn btn-primary w-100">Register</button>
   </form>
 </div>

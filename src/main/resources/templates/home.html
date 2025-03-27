@@ -27,25 +27,23 @@
         <div class="collapse navbar-collapse justify-content-center" id="navbarNav">
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <a class="nav-link active px-4" th:href="@{/}">Home</a>
+                    <a class="nav-link active px-4" th:href="@{/}"><b>Home</b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-4" th:href="@{/about}">About</a>
+                    <a class="nav-link px-4" th:href="@{/about}"><b>About</b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-4" th:href="@{/services}">Services</a>
+                    <a class="nav-link px-4" th:href="@{/services}"><b>Services</b></a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link px-4" th:href="@{/contact}">Contact</a>
+                    <a class="nav-link px-4" th:href="@{/contact}"><b>Contact</b></a>
                 </li>
             </ul>
         </div>
 
         <!-- Login Buttons (Top Right) -->
         <div class="d-flex">
-            <a th:href="@{/doctor/login}" class="btn btn-outline-dark fw-bold me-2">Doctor Login</a>
-            <a th:href="@{/patient/login}" class="btn btn-outline-dark fw-bold me-2">Patient Login</a>
-            <a th:href="@{/admin/login}" class="btn btn-outline-dark fw-bold">Admin Login</a>
+            <a th:href="@{/auth/login}" class="btn btn-outline-dark fw-bold me-2">Login</a>
         </div>
     </div>
 </nav>

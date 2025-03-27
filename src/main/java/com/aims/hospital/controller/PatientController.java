@@ -23,10 +23,10 @@ public class PatientController {
         this.otpService = otpService;
         this.emailService = emailService;
     }
-
+/*
     @GetMapping("/login")
     public String getLoginForm(){
-        return "patient/login";
+        return "auth/login";
     }
     @GetMapping("/register")
     public String getRegistrationForm(Model model){
@@ -37,7 +37,7 @@ public class PatientController {
 
     @PostMapping("/register")
     public String generateOtp(@ModelAttribute Patient patient,Model model){
-        Patient patient1 = patientService.findPatientByEmail(patient.getEmail());
+        Patient patient1 = patientService.findPatientByEmail(patient    .getEmail());
         if (patient1 != null){
             model.addAttribute("error","Email already exists! please login");
             return "patient/login";
@@ -54,7 +54,6 @@ public class PatientController {
     public String otpVerification(@RequestParam String email,@RequestParam String otp,Model model){
         Patient patient = patientService.findPatientByEmail(email);
         OTP otp1 = otpService.fetchByEmail(email);
-        System.out.println(patient.getName());
         System.out.println(otp1.getOtp());
         if (otpService.validateOtp(otp,email)){
             patient.setVerified(true);
@@ -65,5 +64,5 @@ public class PatientController {
         model.addAttribute("error","OTP expired or invalid");
         model.addAttribute("email",email);
         return "patient/verify";
-    }
+    }*/
 }

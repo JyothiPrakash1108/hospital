@@ -24,4 +24,10 @@ public class PatientService implements PatientServiceInterface{
     public Patient findPatientByEmail(String email) {
         return patientRepo.findByEmail(email);
     }
+
+    @Override
+    public void verifyPatient(Patient patient) {
+        patient.setVerified(true);
+        patientRepo.save(patient);
+    }
 }
