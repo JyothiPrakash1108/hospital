@@ -11,13 +11,13 @@ import org.springframework.stereotype.Service;
 public class UserService implements UserServiceInterface{
     @Autowired
     private UserRepo userRepo;
-   /* @Autowired
-    private PasswordEncoder passwordEncoder;*/
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     public void registerPatient(User user){
         user.setRole(Role.PATIENT);
-       //user.setPassword(passwordEncoder.encode(user.getPassword()));
-       user.setPassword(user.getPassword());
+       user.setPassword(passwordEncoder.encode(user.getPassword()));
+       //user.setPassword(user.getPassword());
         user.setVerified(false);
         userRepo.save(user);
     }
