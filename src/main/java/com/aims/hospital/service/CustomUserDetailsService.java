@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 
-
+@Service
 public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UserRepo userRepo;
@@ -24,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         }
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_"+user.getRole().name());
         return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
+                user.getEmail(),
                 user.getPassword(),
                 Collections.singletonList(authority));
     }

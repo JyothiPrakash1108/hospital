@@ -1,5 +1,7 @@
 package com.aims.hospital.configuration;
 
+import com.aims.hospital.service.CustomUserDetailsService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,6 +19,19 @@ public class SecurityConfig {
     }
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
+        System.out.println("spring security initalized");
+        httpSecurity.
+                csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/home/**","/auth/**").permitAll()
+                        .anyRequest().authenticated()
+                )
+                .formLogin(form -> form
+                        .loginPage("/auth/login")
+                        .defaultSuccessUrl("/patient/patientDash",true)
+                        .permitAll()
+                );
 
+        return httpSecurity.build();
     }
 }

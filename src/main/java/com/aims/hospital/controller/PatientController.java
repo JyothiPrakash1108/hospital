@@ -1,27 +1,16 @@
 package com.aims.hospital.controller;
 
-import com.aims.hospital.model.OTP;
-import com.aims.hospital.model.Patient;
-import com.aims.hospital.service.EmailService;
-import com.aims.hospital.service.OtpService;
-import com.aims.hospital.service.PatientService;
-import org.springframework.beans.factory.annotation.Autowired;
+
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/patient")
 public class PatientController {
 
-    private PatientService patientService;
-    private OtpService otpService;
-    private EmailService emailService;
-    @Autowired
-    public PatientController(PatientService patientService,OtpService otpService,EmailService emailService){
-        this.patientService = patientService;
-        this.otpService = otpService;
-        this.emailService = emailService;
+    @GetMapping("/patientDash")
+    public String getPatientDashboard(){
+        return "/patient/patient-dashboard.html";
     }
 /*
     @GetMapping("/login")

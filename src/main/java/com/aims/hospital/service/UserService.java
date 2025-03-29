@@ -16,8 +16,7 @@ public class UserService implements UserServiceInterface{
 
     public void registerPatient(User user){
         user.setRole(Role.PATIENT);
-       user.setPassword(passwordEncoder.encode(user.getPassword()));
-       //user.setPassword(user.getPassword());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         user.setVerified(false);
         userRepo.save(user);
     }

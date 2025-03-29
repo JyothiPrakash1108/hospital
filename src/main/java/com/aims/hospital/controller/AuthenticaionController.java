@@ -53,7 +53,7 @@ public class AuthenticaionController {
                 return "patient/verify";
             }
         }
-        patientService.addPatient(patient);
+        userService.registerPatient(patient);
         String otp = otpService.generateOtp();
         otpService.saveOtp(otp,patient.getEmail());
         emailService.sendEmail(patient.getEmail(),otp);
