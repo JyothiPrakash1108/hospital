@@ -8,10 +8,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/patient")
 public class PatientController {
 
-    @GetMapping("/patientDash")
+    @GetMapping("/dashboard")
     public String getPatientDashboard(){
         return "/patient/patient-dashboard.html";
     }
+
+
+
+
+
+
+
+
+
+
+
+
 /*
     @GetMapping("/login")
     public String getLoginForm(){

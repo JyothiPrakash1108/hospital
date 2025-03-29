@@ -28,7 +28,7 @@ public class SecurityConfig {
                 )
                 .formLogin(form -> form
                         .loginPage("/auth/login")
-                        .defaultSuccessUrl("/patient/patientDash",true)
+                        .successHandler(new CustomAuthenticationSucessHandler())
                         .permitAll()
                 );
 
