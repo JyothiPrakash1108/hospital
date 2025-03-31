@@ -8,17 +8,17 @@ import java.util.List;
 @PrimaryKeyJoinColumn(name = "user_id")
 @DiscriminatorValue("DOCTOR")
 public class Doctor extends User{
-    private String spec;
+    private String department;
     private boolean isAvailable;
     @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
-    public String getSpec() {
-        return spec;
+    public String getDepartment() {
+        return department;
     }
 
-    public void setSpec(String spec) {
-        this.spec = spec;
+    public void setDepartment(String department) {
+        this.department = department;
     }
 
     public boolean isAvailable() {

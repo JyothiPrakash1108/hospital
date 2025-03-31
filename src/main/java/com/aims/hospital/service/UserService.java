@@ -25,4 +25,20 @@ public class UserService implements UserServiceInterface{
     public void saveUser(User User) {
 
     }
+
+    @Override
+    public void registerAdmin(User user) {
+        user.setRole(Role.ADMIN);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setVerified(true);
+        userRepo.save(user);
+    }
+
+    @Override
+    public void registerDoctor(User user) {
+        user.setRole(Role.DOCTOR);
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setVerified(true);
+        userRepo.save(user);
+    }
 }
