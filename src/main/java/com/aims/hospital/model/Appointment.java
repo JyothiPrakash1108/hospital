@@ -1,5 +1,6 @@
 package com.aims.hospital.model;
 
+import com.aims.hospital.enums.Status;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
@@ -17,7 +18,8 @@ public class Appointment {
     @JoinColumn(name = "doctor_id",nullable = false)
     private Doctor doctor;
     private LocalDateTime localDateTime;
-    private String status;
+    @Enumerated(EnumType.STRING)
+    private Status status;
 
     public Appointment() {
     }
@@ -54,11 +56,11 @@ public class Appointment {
         this.localDateTime = localDateTime;
     }
 
-    public String getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 }

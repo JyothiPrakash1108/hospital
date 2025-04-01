@@ -1,2 +1,5 @@
-package com.aims.hospital.enums;public class Status {
+package com.aims.hospital.enums;
+
+public enum Status {
+    PENDING, COMPLETED, CANCELLED
 }
