@@ -9,7 +9,7 @@ import java.util.List;
 @DiscriminatorValue("DOCTOR")
 public class Doctor extends User{
     private String department;
-    private boolean isAvailable;
+    private boolean isAvailable= true;
     @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL)
     private List<Appointment> appointments;
 
