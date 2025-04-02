@@ -8,59 +8,105 @@
         body {
             display: flex;
             min-height: 100vh;
+            background-color: #f4f6f9;
+            font-family: 'Arial', sans-serif;
         }
+
         .sidebar {
-            width: 250px;
-            background-color: #343a40;
-            padding-top: 20px;
-            height: 100vh;
+            width: 260px;
+            background-color: #2c3e50;
             color: white;
+            padding-top: 20px;
+            position: fixed;
+            height: 100vh;
         }
+
+        .sidebar h3 {
+            text-align: center;
+            padding: 10px 0;
+        }
+
         .sidebar a {
             display: block;
-            padding: 15px;
+            padding: 15px 20px;
             color: white;
             text-decoration: none;
-            transition: background 0.3s;
+            transition: background 0.3s ease-in-out;
+            font-size: 16px;
         }
+
         .sidebar a:hover {
-            background-color: #495057;
+            background-color: #34495e;
+            border-left: 5px solid #1abc9c;
         }
+
         .content {
+            margin-left: 260px;
+            padding: 30px;
             flex-grow: 1;
-            padding: 20px;
             background-color: #f8f9fa;
         }
-        .btn-toggle {
-            background-color: #007bff;
-            border: none;
-            padding: 10px;
-            color: white;
-            margin-top: 10px;
-        }
+
         .stats-box {
             background: white;
             padding: 20px;
             border-radius: 10px;
             text-align: center;
             box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease-in-out;
         }
-        .table tbody tr.status-CANCELLED {
-            background-color: #f8d7da !important;
+
+        .stats-box:hover {
+            transform: scale(1.05);
         }
-        .table tbody tr.status-COMPLETED {
-            background-color: #d4edda !important;
+
+        .btn-primary {
+            background-color: #1abc9c;
+            border: none;
         }
-        .table tbody tr.status-PENDING {
-            background-color: #fff3cd !important;
+
+        .btn-primary:hover {
+            background-color: #16a085;
         }
+
+        .table {
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .table tbody tr.status-CANCELLED { background-color: #f8d7da !important; }
+        .table tbody tr.status-COMPLETED { background-color: #d4edda !important; }
+        .table tbody tr.status-PENDING { background-color: #fff3cd !important; }
+
+        select {
+            padding: 5px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        .update-btn {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .update-btn:hover {
+            background-color: #0056b3;
+        }
+
     </style>
 </head>
 <body>
 
 <!-- Sidebar Menu -->
 <div class="sidebar">
-    <h3 class="text-center">Doctor Panel</h3>
+    <h3>Doctor Panel</h3>
     <a href="/doctor/dashboard">Dashboard</a>
     <a href="/doctor/appointments">Appointments</a>
     <a href="/doctor/patients">Patients</a>
@@ -72,7 +118,8 @@
 <div class="content">
     <h2 class="text-primary">Doctor Dashboard</h2>
 
-    <div class="row">
+    <!-- Stats Section -->
+    <div class="row mt-4">
         <div class="col-md-6">
             <div class="stats-box">
                 <h5>Total Patients Today</h5>
@@ -84,26 +131,38 @@
                 <h5>Availability</h5>
                 <h3 th:text="${doctor.isAvailable ? 'Available' : 'Unavailable'}"></h3>
                 <form th:action="@{/doctor/toggle-availability}" method="post">
-                    <button type="submit" class="btn btn-toggle">Toggle Availability</button>
+                    <button type="submit" class="btn btn-primary mt-2">Toggle Availability</button>
                 </form>
             </div>
         </div>
     </div>
 
-    <h3 class="mt-4">Today's Appointments</h3>
+    <!-- Appointments Table -->
+    <h3 class="mt-5">Today's Appointments</h3>
     <table class="table table-bordered mt-3">
-        <thead>
+        <thead class="table-dark">
         <tr>
             <th>Patient Name</th>
             <th>Time</th>
             <th>Status</th>
+            <th>Action</th>
         </tr>
         </thead>
         <tbody>
         <tr th:each="appointment : ${appointments}" th:class="'status-' + ${appointment.status}">
             <td th:text="${appointment.patient.name}"></td>
-            <td th:text="${appointment.date}"></td>
+            <td th:text="${#temporals.format(appointment.date, 'hh:mm a')}"></td>
             <td th:text="${appointment.status}"></td>
+            <td>
+                <form th:action="@{/doctor/appointment/{id}/status(id=${appointment.id})}" method="post">
+                    <select name="status">
+                        <option value="PENDING" th:selected="${appointment.status == 'PENDING'}">Pending</option>
+                        <option value="COMPLETED" th:selected="${appointment.status == 'COMPLETED'}">Completed</option>
+                        <option value="CANCELLED" th:selected="${appointment.status == 'CANCELLED'}">Cancelled</option>
+                    </select>
+                    <button type="submit" class="update-btn">Update</button>
+                </form>
+            </td>
         </tr>
         </tbody>
     </table>

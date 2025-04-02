@@ -1,5 +1,6 @@
 package com.aims.hospital.service;
 
+import com.aims.hospital.enums.Status;
 import com.aims.hospital.model.Patient;
 import com.aims.hospital.repository.PatientRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,4 +31,5 @@ public class PatientService implements PatientServiceInterface{
         patient.setVerified(true);
         patientRepo.save(patient);
     }
+
 }

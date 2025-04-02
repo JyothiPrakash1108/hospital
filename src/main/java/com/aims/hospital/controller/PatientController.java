@@ -1,15 +1,30 @@
 package com.aims.hospital.controller;
 
 
+import com.aims.hospital.model.Patient;
+import com.aims.hospital.service.AppointmentService;
+import com.aims.hospital.service.PatientService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+
+import java.security.Principal;
 
 @Controller
 @RequestMapping("/patient")
 public class PatientController {
-
+    @Autowired
+    private PatientService patientService;
+    @Autowired
+    private AppointmentService appointmentService;
     @GetMapping("/dashboard")
-    public String getPatientDashboard(){
+    public String getPatientDashboard(Model model, Principal principal){
+        String email = principal.getName();
+        Patient patient = patientService.findPatientByEmail(email);
+        model.addAttribute("upcomingAppointments",appointmentService.countUpcomingAppointments(patient.getId()));
+        model.addAttribute("pastAppointments",appointmentService.countPastAppointments(patient.getId()));
+        model.addAttribute("appointments",appointmentService.getAppointmentsByPatientId(patient.getId()));
         return "/patient/patient-dashboard.html";
     }
 
