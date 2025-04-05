@@ -1,5 +1,6 @@
 package com.aims.hospital.configuration;
 
+import com.aims.hospital.enums.Role;
 import com.aims.hospital.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,9 @@ public class SecurityConfig {
                 csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/home/**","/auth/**").permitAll()
+                        .requestMatchers("/doctor/**").hasRole(String.valueOf(Role.DOCTOR))
+                        .requestMatchers("/patient/**").hasRole(String.valueOf(Role.PATIENT))
+                        .requestMatchers("/admin/**").hasRole(String.valueOf(Role.ADMIN))
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form

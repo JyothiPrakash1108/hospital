@@ -23,7 +23,7 @@ public class UserService implements UserServiceInterface{
 
     @Override
     public void saveUser(User User) {
-
+        userRepo.save(User);
     }
 
     @Override
