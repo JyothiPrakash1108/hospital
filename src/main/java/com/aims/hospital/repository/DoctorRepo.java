@@ -10,4 +10,5 @@ import java.util.List;
 public interface DoctorRepo extends JpaRepository<Doctor,Integer> {
     List<Doctor> findByIsAvailableTrue();
     Doctor findByEmail(String email);
+    List<Doctor> findByDepartmentAndIsAvailableTrue(String department);
 }

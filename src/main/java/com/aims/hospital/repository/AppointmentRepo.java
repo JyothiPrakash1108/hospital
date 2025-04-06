@@ -2,6 +2,7 @@ package com.aims.hospital.repository;
 
 import com.aims.hospital.enums.Status;
 import com.aims.hospital.model.Appointment;
+import com.aims.hospital.model.Doctor;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -19,4 +20,6 @@ public interface AppointmentRepo extends JpaRepository<Appointment,Integer> {
     List<Appointment> findByDoctorIdAndDate(@Param("doctorId") int doctorId, @Param("startOfDay") LocalDateTime startOfDay, @Param("endOfDay") LocalDateTime endOfDay);
     List<Appointment> findByPatientId(int patientId);
     int countByPatientIdAndStatus(int patientId, Status status);
+    List<Appointment> findByDoctorAndLocalDateTimeBetween(Doctor doctor,LocalDateTime start,LocalDateTime end);
+    boolean existsByDoctorAndLocalDateTime(Doctor doctor,LocalDateTime localDateTime);
 }
