@@ -12,6 +12,11 @@ public class Doctor extends User{
     private boolean isAvailable= true;
     @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL)
     private List<Appointment> appointments;
+    @OneToMany(mappedBy = "doctor" , cascade = CascadeType.ALL)
+    private List<DoctorAvailability> doctorAvailabilities;
+
+    public Doctor() {
+    }
 
     public String getDepartment() {
         return department;
@@ -27,5 +32,21 @@ public class Doctor extends User{
 
     public void setAvailable(boolean available) {
         isAvailable = available;
+    }
+
+    public List<Appointment> getAppointments() {
+        return appointments;
+    }
+
+    public void setAppointments(List<Appointment> appointments) {
+        this.appointments = appointments;
+    }
+
+    public List<DoctorAvailability> getDoctorAvailabilities() {
+        return doctorAvailabilities;
+    }
+
+    public void setDoctorAvailabilities(List<DoctorAvailability> doctorAvailabilities) {
+        this.doctorAvailabilities = doctorAvailabilities;
     }
 }
