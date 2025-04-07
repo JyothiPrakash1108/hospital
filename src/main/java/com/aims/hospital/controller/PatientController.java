@@ -18,17 +18,20 @@ public class PatientController {
     private PatientService patientService;
     @Autowired
     private AppointmentService appointmentService;
+
     @GetMapping("/dashboard")
-    public String getPatientDashboard(Model model, Principal principal){
+    public String getPatientDashboard(Model model, Principal principal) {
         String email = principal.getName();
         Patient patient = patientService.findPatientByEmail(email);
-        model.addAttribute("upcomingAppointments",appointmentService.countUpcomingAppointments(patient.getId()));
-        model.addAttribute("pastAppointments",appointmentService.countPastAppointments(patient.getId()));
-        model.addAttribute("appointments",appointmentService.getAppointmentsByPatientId(patient.getId()));
+        model.addAttribute("upcomingAppointments", appointmentService.countUpcomingAppointments(patient.getId()));
+        model.addAttribute("pastAppointments", appointmentService.countPastAppointments(patient.getId()));
+        model.addAttribute("appointments", appointmentService.getAppointmentsByPatientId(patient.getId()));
         return "/patient/patient-dashboard.html";
     }
+    @GetMapping("/book-appointment")
+    public String getBookingForm(Model model){
 
-
+    }
 
 
 
