@@ -19,7 +19,7 @@ public class DoctorAvailabilityService  implements DoctorAvailabilityServiceInte
                 .orElseGet(() -> {
                     DoctorAvailability availability = new DoctorAvailability();
                     availability.setDoctor(doctor);
-                    availability.setLocalDate(localDate);
+                    availability.setDate(localDate);
                     return availability;
                 });
     }

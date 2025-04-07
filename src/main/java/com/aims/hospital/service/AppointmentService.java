@@ -2,11 +2,14 @@ package com.aims.hospital.service;
 
 import com.aims.hospital.enums.Status;
 import com.aims.hospital.model.Appointment;
+import com.aims.hospital.model.Doctor;
 import com.aims.hospital.repository.AppointmentRepo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -49,6 +52,11 @@ public class AppointmentService implements AppointementServiceInterface{
     @Override
     public void cancelAppointment(int patientId) {
         return ;
+    }
+
+    @Override
+    public List<LocalTime> getAvailableSlots(Doctor doctor, LocalDate localDate) {
+        return null;
     }
 
 }

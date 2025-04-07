@@ -1,16 +1,16 @@
 package com.aims.hospital.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Entity
 public class DoctorAvailability {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private LocalDate localDate;
+    private LocalDate date;
     private boolean available = true;
     private LocalTime startTime = LocalTime.of(9,0);
     private LocalTime endTime = LocalTime.of(17,0);
@@ -29,12 +29,12 @@ public class DoctorAvailability {
         this.id = id;
     }
 
-    public LocalDate getLocalDate() {
-        return localDate;
+    public LocalDate getDate() {
+        return date;
     }
 
-    public void setLocalDate(LocalDate localDate) {
-        this.localDate = localDate;
+    public void setDate(LocalDate date) {
+        this.date = date;
     }
 
     public boolean isAvailable() {

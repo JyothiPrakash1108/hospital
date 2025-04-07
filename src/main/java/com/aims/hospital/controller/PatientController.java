@@ -3,6 +3,7 @@ package com.aims.hospital.controller;
 
 import com.aims.hospital.model.Patient;
 import com.aims.hospital.service.AppointmentService;
+import com.aims.hospital.service.DoctorService;
 import com.aims.hospital.service.PatientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,6 +19,8 @@ public class PatientController {
     private PatientService patientService;
     @Autowired
     private AppointmentService appointmentService;
+    @Autowired
+    private DoctorService doctorService;
 
     @GetMapping("/dashboard")
     public String getPatientDashboard(Model model, Principal principal) {
@@ -30,7 +33,8 @@ public class PatientController {
     }
     @GetMapping("/book-appointment")
     public String getBookingForm(Model model){
-
+        model.addAttribute("departments",doctorService.getAllDepartments());
+        return "/patient/appointment";
     }
 
 
