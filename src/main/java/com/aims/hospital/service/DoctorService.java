@@ -70,4 +70,9 @@ public class DoctorService implements DoctorServiceInterface{
                )
                .toList();
     }
+
+    @Override
+    public Doctor findById(int doctorId) {
+        return doctorRepo.findById(doctorId).orElse(null);
+    }
 }

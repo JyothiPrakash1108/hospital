@@ -49,6 +49,34 @@ public class Runner implements CommandLineRunner {
         doc2.setAvailable(true);
         doc2.setVerified(true);
         userService.registerDoctor(doc2);
+
+        Doctor doc3 = new Doctor();
+        doc3.setUsername("Dr. Anil Kumar");
+        doc3.setEmail("anil.kumar@hospital.com");
+        doc3.setPassword("password"); // store encrypted in real apps
+        doc3.setDepartment("Cardiology");
+        doc3.setAvailable(true);
+        doc3.setPhoneNumber("1234567890");
+
+        Doctor doc4 = new Doctor();
+        doc4.setUsername("Dr. Priya Sharma");
+        doc4.setEmail("priya.sharma@hospital.com");
+        doc4.setPassword("password");
+        doc4.setDepartment("Dermatology");
+        doc4.setAvailable(true);
+        doc4.setPhoneNumber("7418529630");
+
+        Doctor doc5 = new Doctor();
+        doc5.setPhoneNumber("3697852140");
+        doc5.setUsername("Dr. Ramesh Babu");
+        doc5.setEmail("ramesh.babu@hospital.com");
+        doc5.setPassword("password");
+        doc5.setDepartment("Orthopedics");
+        doc5.setAvailable(true);
+
+        userService.registerDoctor(doc3);
+        userService.registerDoctor(doc4);
+        userService.registerDoctor(doc5);
     }
     private void seedPatients(){
         Patient patient1 = new Patient();

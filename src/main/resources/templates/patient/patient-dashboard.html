@@ -104,8 +104,8 @@
         </thead>
         <tbody>
         <tr th:each="appointment : ${appointments}" th:class="'status-' + ${appointment.status}">
-            <td th:text="${appointment.doctor.name}"></td>
-            <td th:text="${appointment.date}"></td>
+            <td th:text="${appointment.doctor.username}"></td>
+            <td th:text="${appointment.localDateTime}"></td>
             <td th:text="${appointment.status}"></td>
             <td>
                 <a th:if="${appointment.status == 'PENDING'}" th:href="@{/patient/cancel-appointment/{id}(id=${appointment.id})}" class="btn btn-danger btn-sm"><i class="bi bi-x-circle"></i> Cancel</a>

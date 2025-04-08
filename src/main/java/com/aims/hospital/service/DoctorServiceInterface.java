@@ -13,4 +13,5 @@ public interface DoctorServiceInterface {
     void updateAppointmentStatus(int appointmentId, String status);
     List<String> getAllDepartments();
     List<Doctor> findAvailableDoctorsByDepartmentAndDate(String department, LocalDate localDate);
+    Doctor findById(int doctorId);
 }

@@ -102,7 +102,7 @@
                         <div class="col-md-4 mb-2">
                             <div class="card" onclick="selectDoctor(${doc.id})">
                                 <div class="card-body">
-                                    <h5 class="card-title">${doc.name}</h5>
+                                    <h5 class="card-title">${doc.username}</h5>
                                     <p class="card-text">${doc.department}</p>
                                 </div>
                             </div>
@@ -126,7 +126,7 @@
             success: function (slots) {
                 let html = '';
                 slots.forEach(slot => {
-                    html += `<button class="btn time-slot-btn available-slot" onclick="selectSlot('${slot}')">${slot}</button>`;
+                    html += `<button type="button" class="btn time-slot-btn available-slot" onclick="selectSlot('${slot}')">${slot}</button>`;
                 });
                 $('#timeSlots').html(html);
                 $('#timeSlotContainer').show();
@@ -134,36 +134,45 @@
             }
         });
     }
+    function selectSlot(slot) {
+    $('#selectedTime').val(slot);  // Hidden field to store time
+    $('#bookBtn').removeClass('d-none');
+
+    // Optionally highlight selected slot
+    $('.time-slot-btn').removeClass('btn-primary').addClass('btn-outline-primary');
+    $(`.time-slot-btn:contains('${slot}')`).removeClass('btn-outline-primary').addClass('btn-primary');
+}
 
     function selectSlot(slot) {
-        selectedTimeSlot = slot;
-        $('.time-slot-btn').removeClass('selected-slot');
-        $(`.time-slot-btn:contains("${slot}")`).addClass('selected-slot');
-        $('#bookBtn').show();
+    selectedTimeSlot = slot;
+    $('.time-slot-btn').removeClass('selected-slot');
+    $(`.time-slot-btn:contains("${slot}")`).addClass('selected-slot');
+    $('#bookBtn').show();
     }
+
 
     function bookAppointment() {
-        const date = document.getElementById("appointmentDate").value;
-        if (!selectedDoctorId || !selectedTimeSlot) return;
+    const date = document.getElementById("appointmentDate").value;
+    if (!selectedDoctorId || !selectedTimeSlot) return;
 
-        $.ajax({
-            url: '/appointment/book',
-            method: 'POST',
-            contentType: 'application/json',
-            data: JSON.stringify({
-                doctorId: selectedDoctorId,
-                date: date,
-                timeSlot: selectedTimeSlot
-            }),
-            success: function () {
-                alert("Appointment booked successfully!");
-                window.location.href = '/patient/dashboard';
-            },
-            error: function () {
-                alert("Failed to book appointment.");
-            }
-        });
-    }
+    $.ajax({
+        url: '/appointment/book',
+        method: 'POST',
+        data: {
+            doctorId: selectedDoctorId,
+            date: date,
+            timeSlot: selectedTimeSlot
+        },
+        success: function () {
+            alert("Appointment booked successfully!");
+             window.location.href = '/patient/dashboard';
+             },
+         error: function () {
+            alert("Failed to book appointment.");
+        }
+    });
+}
+
 </script>
 </body>
 </html>

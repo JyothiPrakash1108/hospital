@@ -3,6 +3,8 @@ package com.aims.hospital.service;
 import com.aims.hospital.enums.Status;
 import com.aims.hospital.model.Appointment;
 import com.aims.hospital.model.Doctor;
+import com.aims.hospital.model.Patient;
+import org.springframework.cglib.core.Local;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -16,4 +18,6 @@ public interface AppointementServiceInterface {
     int countPastAppointments(int patientId);
     void cancelAppointment(int appointmentId);
     List<LocalTime> getAvailableSlots(Doctor doctor, LocalDate localDate);
+    public void bookApointment(Patient patient, Doctor doctor, LocalDate localDate,LocalTime localTime);
+
 }
