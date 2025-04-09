@@ -1,5 +1,6 @@
 package com.aims.hospital.service;
 
+import com.aims.hospital.configuration.CustomUserDetails;
 import com.aims.hospital.model.User;
 import com.aims.hospital.repository.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +24,10 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("user email not verified");
         }
         SimpleGrantedAuthority authority = new SimpleGrantedAuthority("ROLE_"+user.getRole().name());
-        return new org.springframework.security.core.userdetails.User(
+       /* return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 user.getPassword(),
-                Collections.singletonList(authority));
+                Collections.singletonList(authority));*/
+        return new CustomUserDetails(user, Collections.singletonList(authority));
     }
 }

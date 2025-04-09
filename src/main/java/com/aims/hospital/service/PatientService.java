@@ -27,6 +27,11 @@ public class PatientService implements PatientServiceInterface{
     }
 
     @Override
+    public Patient findById(int id) {
+        return patientRepo.findById(id).orElse(null);
+    }
+
+    @Override
     public void verifyPatient(Patient patient) {
         patient.setVerified(true);
         patientRepo.save(patient);
