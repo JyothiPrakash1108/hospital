@@ -2,24 +2,32 @@ package com.aims.hospital.configuration;
 
 import com.aims.hospital.enums.Gender;
 import com.aims.hospital.enums.Role;
-import com.aims.hospital.model.Admin;
-import com.aims.hospital.model.Doctor;
-import com.aims.hospital.model.Patient;
-import com.aims.hospital.model.User;
+import com.aims.hospital.model.*;
+import com.aims.hospital.repository.DoctorAvailabilityRepo;
+import com.aims.hospital.repository.DoctorRepo;
 import com.aims.hospital.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDate;
+import java.time.LocalTime;
+import java.util.List;
+
 @Component
 public class Runner implements CommandLineRunner {
     @Autowired
-   private UserService userService;
+    private UserService userService;
+    @Autowired
+    private  DoctorRepo doctorRepo;
+    @Autowired
+    private  DoctorAvailabilityRepo doctorAvailabilityRepo;
     @Override
     public void run(String... args) throws Exception {
         seedAdmin();
         seedDoctor();
         seedPatients();
+       /* doctorAvailability();*/
     }
     private void seedAdmin(){
         User user = new Admin();
@@ -89,5 +97,26 @@ public class Runner implements CommandLineRunner {
         userService.registerPatient(patient1);
         patient1.setVerified(true);
         userService.saveUser(patient1);
+    }
+    public void doctorAvailability(){
+        List<Doctor> allDoctors = doctorRepo.findAll();
+        LocalDate today = LocalDate.now();
+
+        for (Doctor doctor : allDoctors) {
+            for (int i = 0; i < 4; i++) {
+                LocalDate date = today.plusDays(i);
+                boolean exists = doctorAvailabilityRepo.existsByDoctorAndDate(doctor, date);
+
+                if (!exists) {
+                    DoctorAvailability availability = new DoctorAvailability();
+                    availability.setDoctor(doctor);
+                    availability.setDate(date);
+                    availability.setAvailable(true);
+                    availability.setStartTime(LocalTime.of(9, 0));
+                    availability.setEndTime(LocalTime.of(17, 0));
+                    doctorAvailabilityRepo.save(availability);
+                }
+            }
+        }
     }
 }
