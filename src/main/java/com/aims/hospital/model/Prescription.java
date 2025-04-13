@@ -13,6 +13,7 @@ public class Prescription {
     @Lob
     @Column(columnDefinition = "LONGBLOB")
     private byte[] fileData;
+    private String fileType;
     @OneToOne
     @JoinColumn(name = "appointment_id",referencedColumnName = "id")
     @JsonIgnore
@@ -21,11 +22,12 @@ public class Prescription {
 
     }
 
-    public Prescription(int id, String description, byte[] fileData, Appointment appointment) {
+    public Prescription(int id, String description, byte[] fileData, Appointment appointment,String fileType) {
         this.id = id;
         this.description = description;
         this.fileData = fileData;
         this.appointment = appointment;
+        this.fileType = fileType;
     }
 
     public int getId() {
@@ -58,5 +60,13 @@ public class Prescription {
 
     public void setAppointment(Appointment appointment) {
         this.appointment = appointment;
+    }
+
+    public String getFileType() {
+        return fileType;
+    }
+
+    public void setFileType(String fileType) {
+        this.fileType = fileType;
     }
 }
