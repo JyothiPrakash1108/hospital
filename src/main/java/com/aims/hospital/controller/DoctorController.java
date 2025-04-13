@@ -8,6 +8,7 @@ import com.aims.hospital.service.DoctorAvailabilityService;
 import com.aims.hospital.service.DoctorService;
 import com.aims.hospital.wrapper.DoctorAvailabilityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -121,5 +122,21 @@ public class DoctorController {
         List<Appointment> appointments = appointmentService.findAppointmentByDoctor(doctor);
         model.addAttribute("appointments",appointments);
         return "/doctor/doctor_appointments";
+    }
+    @GetMapping("/appointments/filter")
+    public String filterAppointments(
+            @RequestParam(required = false ) String patientName,
+            @RequestParam(required = false) @DateTimeFormat LocalDate fromDate,
+            @RequestParam(required = false) @DateTimeFormat LocalDate toDate,Principal principal,Model model){
+
+        String email = principal.getName();
+        Doctor doctor = doctorService.findByEmail(email);
+        List<Appointment> appointments = appointmentService.filterAppointments(doctor,patientName,fromDate,toDate);
+        //debug
+        for (Appointment appointment : appointments) {
+            System.out.println((appointment.getPatient().getUsername()));
+        }
+        model.addAttribute("appointments",appointments);
+        return "fragments/appointments :: appointmentTable";
     }
 }
