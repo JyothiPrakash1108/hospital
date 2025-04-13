@@ -125,4 +125,9 @@ public class AppointmentService implements AppointementServiceInterface{
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public Appointment findById(int appointmentId) {
+        return appointmentRepo.findById(appointmentId).orElse(null);
+    }
+
 }

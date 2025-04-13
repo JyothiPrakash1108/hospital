@@ -22,4 +22,5 @@ public interface AppointementServiceInterface {
     public void bookApointment(Patient patient, Doctor doctor, LocalDate localDate,LocalTime localTime);
     List<Appointment> findAppointmentByDoctor(Doctor doctor);
     List<Appointment> filterAppointments(Doctor doctor,String patientName,LocalDate fromDate,LocalDate toDate);
+    Appointment findById(int appointmentId);
 }
