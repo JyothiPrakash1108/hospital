@@ -3,18 +3,24 @@ package com.aims.hospital.controller;
 import com.aims.hospital.model.Appointment;
 import com.aims.hospital.model.Doctor;
 import com.aims.hospital.model.DoctorAvailability;
+import com.aims.hospital.model.Prescription;
 import com.aims.hospital.service.AppointmentService;
 import com.aims.hospital.service.DoctorAvailabilityService;
 import com.aims.hospital.service.DoctorService;
+import com.aims.hospital.service.PrescriptionService;
 import com.aims.hospital.wrapper.DoctorAvailabilityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.channels.MulticastChannel;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -33,6 +39,8 @@ public class DoctorController {
     private AppointmentService appointmentService;
     @Autowired
     private DoctorAvailabilityService doctorAvailabilityService;
+    @Autowired
+    private PrescriptionService prescriptionService;
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAutoGrowNestedPaths(true);
@@ -139,4 +147,46 @@ public class DoctorController {
         model.addAttribute("appointments",appointments);
         return "fragments/appointments :: appointmentTable";
     }
+    @PostMapping("/prescription/add")
+    public String uploadPrescription(@RequestParam("appointmentId") int appointmentId,
+                                     @RequestParam("description") String description,
+                                     @RequestParam("file")MultipartFile multipartFile){
+        Appointment appointment = appointmentService.findById(appointmentId);
+        Prescription prescription = new Prescription();
+        prescription.setDescription(description);
+        prescription.setAppointment(appointment);
+        prescription.setFileType(multipartFile.getContentType());
+        try {
+            prescription.setFileData(multipartFile.getBytes());
+            prescriptionService.save(prescription);
+            System.out.println("setting file data ");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        return "redirect:/doctor/appointments";
+    }
+    @GetMapping("/prescription/view/{appointmentId}")
+    public ResponseEntity<byte[]> viewPresscription(@PathVariable int appointmentId){
+        Prescription prescription = prescriptionService.findByAppointmentId(appointmentId);
+        byte[] fileData = prescription.getFileData();
+        String fileType = prescription.getFileType();
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.setContentType(MediaType.parseMediaType(fileType));
+        httpHeaders.setContentDisposition(ContentDisposition.inline()
+                .filename("prescription_"+appointmentId+getExtensionFromMimeType(fileType)).build());
+        return new ResponseEntity<>(fileData, httpHeaders, HttpStatus.OK);
+    }
+    private String getExtensionFromMimeType(String mimeType) {
+        switch (mimeType) {
+            case "application/pdf":
+                return ".pdf";
+            case "image/jpeg":
+                return ".jpg";
+            case "image/png":
+                return ".png";
+            default:
+                return "";
+        }
+    }
+
 }
