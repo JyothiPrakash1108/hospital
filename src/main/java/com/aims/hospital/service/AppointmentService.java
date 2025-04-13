@@ -13,7 +13,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class AppointmentService implements AppointementServiceInterface{
@@ -96,5 +98,31 @@ public class AppointmentService implements AppointementServiceInterface{
         return appointmentRepo.findByDoctorOrderByLocalDateTimeAsc(doctor);
     }
 
+    @Override
+    public List<Appointment> filterAppointments(Doctor doctor, String patientName, LocalDate fromDate, LocalDate toDate) {
+        List<Appointment> appointments = appointmentRepo.findByDoctor(doctor);
+        return appointments.stream()
+                .filter(app -> {
+                    boolean nameMatch = (patientName == null || patientName.isBlank())
+                            || app.getPatient().getUsername().toLowerCase().contains(patientName.toLowerCase());
+
+                    boolean dateMatch = true;
+                    if (fromDate != null && toDate != null) {
+                        LocalDate date = app.getLocalDateTime().toLocalDate();
+                        dateMatch = (date.isEqual(fromDate) || date.isAfter(fromDate)) &&
+                                (date.isEqual(toDate) || date.isBefore(toDate));
+                    } else if (fromDate != null) {
+                        LocalDate date = app.getLocalDateTime().toLocalDate();
+                        dateMatch = date.isEqual(fromDate) || date.isAfter(fromDate);
+                    } else if (toDate != null) {
+                        LocalDate date = app.getLocalDateTime().toLocalDate();
+                        dateMatch = date.isEqual(toDate) || date.isBefore(toDate);
+                    }
+
+                    return nameMatch && dateMatch;
+                })
+                .sorted(Comparator.comparing(Appointment::getLocalDateTime).reversed())
+                .collect(Collectors.toList());
+    }
 
 }
