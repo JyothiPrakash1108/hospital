@@ -21,4 +21,5 @@ public interface AppointementServiceInterface {
     List<LocalTime> getAvailableSlots(Doctor doctor, LocalDate localDate);
     public void bookApointment(Patient patient, Doctor doctor, LocalDate localDate,LocalTime localTime);
     List<Appointment> findAppointmentByDoctor(Doctor doctor);
+    List<Appointment> filterAppointments(Doctor doctor,String patientName,LocalDate fromDate,LocalDate toDate);
 }
