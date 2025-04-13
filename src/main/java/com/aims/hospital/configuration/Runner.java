@@ -2,15 +2,19 @@ package com.aims.hospital.configuration;
 
 import com.aims.hospital.enums.Gender;
 import com.aims.hospital.enums.Role;
+import com.aims.hospital.enums.Status;
 import com.aims.hospital.model.*;
+import com.aims.hospital.repository.AppointmentRepo;
 import com.aims.hospital.repository.DoctorAvailabilityRepo;
 import com.aims.hospital.repository.DoctorRepo;
+import com.aims.hospital.repository.PatientRepo;
 import com.aims.hospital.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 
@@ -22,13 +26,64 @@ public class Runner implements CommandLineRunner {
     private  DoctorRepo doctorRepo;
     @Autowired
     private  DoctorAvailabilityRepo doctorAvailabilityRepo;
+    @Autowired
+    private AppointmentRepo appointmentRepo;
+
+    @Autowired
+    private PatientRepo patientRepo;
+
     @Override
     public void run(String... args) throws Exception {
         seedAdmin();
         seedDoctor();
         seedPatients();
        /* doctorAvailability();*/
+        seedAppointments();
     }
+
+    private void seedAppointments() {
+        List<Doctor> doctors = doctorRepo.findAll();
+        List<Patient> patients = patientRepo.findAll();
+
+        if (doctors.isEmpty() || patients.isEmpty()) {
+            System.out.println("No doctors or patients found. Skipping appointment seeding.");
+            return;
+        }
+
+        Doctor doc1 = doctors.get(0);
+        Doctor doc2 = doctors.size() > 1 ? doctors.get(1) : doc1;
+        Patient patient1 = patients.get(0);
+        Patient patient2 = patients.size() > 1 ? patients.get(1) : patient1;
+
+        // Create appointments with different statuses and times
+        Appointment appt1 = new Appointment();
+        appt1.setDoctor(doc1);
+        appt1.setPatient(patient1);
+        appt1.setLocalDateTime(LocalDateTime.now().plusHours(2));
+        appt1.setStatus(Status.COMPLETED);
+
+        Appointment appt2 = new Appointment();
+        appt2.setDoctor(doc2);
+        appt2.setPatient(patient1);
+        appt2.setLocalDateTime(LocalDateTime.now().minusDays(1));
+        appt2.setStatus(Status.COMPLETED);
+
+        Appointment appt3 = new Appointment();
+        appt3.setDoctor(doc1);
+        appt3.setPatient(patient2);
+        appt3.setLocalDateTime(LocalDateTime.now().plusDays(1).withHour(10).withMinute(0));
+        appt3.setStatus(Status.PENDING);
+
+        Appointment appt4 = new Appointment();
+        appt4.setDoctor(doc2);
+        appt4.setPatient(patient2);
+        appt4.setLocalDateTime(LocalDateTime.now().plusDays(2).withHour(11).withMinute(30));
+        appt4.setStatus(Status.CANCELLED);
+
+        appointmentRepo.saveAll(List.of(appt1, appt2, appt3, appt4));
+    }
+
+
     private void seedAdmin(){
         User user = new Admin();
         user.setUsername("a");
