@@ -137,8 +137,8 @@
             </thead>
             <tbody>
             <tr th:each="appointment : ${appointments}" th:class="'status-' + ${appointment.status}">
-                <td th:text="${appointment.patient.name}"></td>
-                <td th:text="${#temporals.format(appointment.date, 'hh:mm a')}"></td>
+                <td th:text="${appointment.patient.username}"></td>
+                <td th:text="${appointment.localDateTime}"></td>
                 <td th:text="${appointment.status}"></td>
                 <td>
                     <form th:action="@{/doctor/appointment/{id}/status(id=${appointment.id})}" method="post">
