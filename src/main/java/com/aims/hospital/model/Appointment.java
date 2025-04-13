@@ -20,6 +20,8 @@ public class Appointment {
     private LocalDateTime localDateTime;
     @Enumerated(EnumType.STRING)
     private Status status;
+    @OneToOne(mappedBy = "appointment", cascade = CascadeType.ALL,orphanRemoval = true)
+    private Prescription prescription;
 
     public Appointment() {
     }
@@ -62,5 +64,13 @@ public class Appointment {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Prescription getPrescription() {
+        return prescription;
+    }
+
+    public void setPrescription(Prescription prescription) {
+        this.prescription = prescription;
     }
 }

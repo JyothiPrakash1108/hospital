@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Doctor Appointments</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f4f6f9;
+            font-family: 'Segoe UI', sans-serif;
+        }
+
+        .sidebar {
+            width: 260px;
+            background-color: #2c3e50;
+            color: white;
+            position: fixed;
+            height: 100vh;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px 20px;
+            color: white;
+            text-decoration: none;
+            transition: background 0.3s;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+        }
+
+        .navbar {
+            background-color: #007bff;
+        }
+
+        .navbar .nav-link,
+        .navbar-brand {
+            color: white;
+        }
+
+        .navbar .nav-link:hover {
+            color: #e2e6ea;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <h3 class="text-center">Doctor Panel</h3>
+    <a href="/doctor/dashboard">Dashboard</a>
+    <a href="/doctor/appointments">Appointments</a>
+    <a href="/doctor/patients">Patients</a>
+    <a href="/doctor/profile">Profile</a>
+    <a href="/logout">Logout</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg mb-4">
+        <div class="container-fluid">
+            <a class="navbar-brand">Doctor Dashboard</a>
+            <div class="ms-auto">
+                <a href="/logout" class="btn btn-danger">Logout</a>
+            </div>
+        </div>
+    </nav>
+    <!-- 🔍 FILTER FORM -->
+    <form id="ajaxFilterForm" class="row g-3 mb-4">
+        <div class="col-md-4">
+            <input type="text" id="patientName" name="patientName" class="form-control" placeholder="Search Patient">
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="fromDate" class="form-control">
+        </div>
+        <div class="col-md-3">
+            <input type="date" name="toDate" class="form-control">
+        </div>
+        <div class="col-md-2 d-none">
+            <button class="btn btn-primary w-100" type="submit">Filter</button>
+        </div>
+    </form>
+    <!-- Appointments Table -->
+    <div>
+        <h4>All Appointments</h4>
+        <!-- Placeholder for table -->
+        <div id="appointmentTableContainer" th:replace="/fragments/appointments :: appointmentTable(${appointments})"></div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const patientInput = document.querySelector('input[name="patientName"]');
+        const fromDateInput = document.querySelector('input[name="fromDate"]');
+        const toDateInput = document.querySelector('input[name="toDate"]');
+        const tableContainer =  document.getElementById("appointmentTableContainer");
+
+        function fetchFilteredAppointments() {
+            const name = patientInput.value;
+            const fromDate = fromDateInput.value;
+            const toDate = toDateInput.value;
+
+            const params = new URLSearchParams();
+            if (name) params.append("patientName", name);
+            if (fromDate) params.append("fromDate", fromDate);
+            if (toDate) params.append("toDate", toDate);
+
+            fetch(`/doctor/appointments/filter?${params.toString()}`)
+                .then(res => res.text())
+                .then(html => {
+                    tableContainer.innerHTML = html;
+                });
+        }
+
+        // Bind input and change events
+        [patientInput, fromDateInput, toDateInput].forEach(input => {
+            input.addEventListener("input", fetchFilteredAppointments);
+            input.addEventListener("change", fetchFilteredAppointments);
+        });
+    });
+</script>
+
+
+</body>
+</html>
