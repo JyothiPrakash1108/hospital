@@ -114,5 +114,12 @@ public class DoctorController {
         freshData.forEach(a -> System.out.println(a.getDate() + " | " + a.getStartTime() + " - " + a.getEndTime() + " | " + a.isAvailable()));
      return "redirect:/doctor/dashboard";
     }
-
+    @GetMapping("/appointments")
+    public String getAppointments(Model model,Principal principal){
+        String email = principal.getName();;
+        Doctor doctor = doctorService.findByEmail(email);
+        List<Appointment> appointments = appointmentService.findAppointmentByDoctor(doctor);
+        model.addAttribute("appointments",appointments);
+        return "/doctor/doctor_appointments";
+    }
 }

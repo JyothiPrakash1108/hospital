@@ -22,4 +22,7 @@ public interface AppointmentRepo extends JpaRepository<Appointment,Integer> {
     int countByPatientIdAndStatus(int patientId, Status status);
     List<Appointment> findByDoctorAndLocalDateTimeBetween(Doctor doctor,LocalDateTime start,LocalDateTime end);
     boolean existsByDoctorAndLocalDateTime(Doctor doctor,LocalDateTime localDateTime);
+    List<Appointment> findByDoctorOrderByLocalDateTimeAsc(Doctor doctor);
+
+
 }

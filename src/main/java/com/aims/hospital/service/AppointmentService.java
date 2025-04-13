@@ -91,7 +91,10 @@ public class AppointmentService implements AppointementServiceInterface{
         appointmentRepo.save(appointment);
     }
 
-
+    @Override
+    public List<Appointment> findAppointmentByDoctor(Doctor doctor) {
+        return appointmentRepo.findByDoctorOrderByLocalDateTimeAsc(doctor);
+    }
 
 
 }
