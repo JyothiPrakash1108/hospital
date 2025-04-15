@@ -1,3 +1,4 @@
+<!-- doctor-patients.html -->
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
@@ -49,16 +50,12 @@
             color: #e2e6ea;
         }
 
-        .stats-box {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            text-align: center;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        .card:hover {
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
         }
 
-        .table th, .table td {
-            vertical-align: middle;
+        .dropdown-item {
+            white-space: normal;
         }
     </style>
 </head>
@@ -76,8 +73,6 @@
 
 <!-- Main Content -->
 <div class="main-content">
-
-  <!-- Navbar -->
   <nav class="navbar navbar-expand-lg mb-4">
     <div class="container-fluid">
       <a class="navbar-brand">My Patients</a>
@@ -87,15 +82,54 @@
     </div>
   </nav>
 
-  <!-- Page Content -->
   <div class="container">
-    <!-- ⬇️ Replace this part when you define content -->
-    <div class="text-center text-muted">
-      <h5>Waiting for content definition...</h5>
-      <p>Tell me what should be shown in this section: list of patients, history, filters?</p>
+    <div class="row" th:each="patient : ${patients}">
+      <div class="col-md-12 mb-4">
+        <div class="card p-3">
+          <div class="d-flex justify-content-between align-items-center">
+            <div>
+              <h5 th:text="'Patient ID: ' + ${patient.id}"></h5>
+              <h6 th:text="'Name: ' + ${patient.name}"></h6>
+            </div>
+            <div>
+              <a th:href="@{'/chat/with/' + ${patient.id}}" class="btn btn-primary me-2">Chat</a>
+
+              <!-- Clinical History Dropdown -->
+              <div class="btn-group me-2">
+                <button type="button" class="btn btn-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Clinical History
+                </button>
+                <ul class="dropdown-menu">
+                  <li th:each="history, iter : ${patient.clinicalHistories}">
+                    <a class="dropdown-item d-flex justify-content-between" th:href="@{'/files/procedure/' + ${history.id}}">
+                      <span th:text="${iter.count} + '. ' + ${history.procedureName}"></span>
+                      <span>View</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+              <!-- Reports Dropdown -->
+              <div class="btn-group">
+                <button type="button" class="btn btn-info dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                  Lab Reports
+                </button>
+                <ul class="dropdown-menu">
+                  <li th:each="report, iter : ${patient.reports}">
+                    <a class="dropdown-item d-flex justify-content-between" th:href="@{'/files/report/' + ${report.id}}">
+                      <span th:text="${iter.count} + '. ' + ${report.name}"></span>
+                      <span>View</span>
+                    </a>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>

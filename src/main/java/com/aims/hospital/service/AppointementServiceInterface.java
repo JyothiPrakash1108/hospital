@@ -10,6 +10,7 @@ import javax.print.Doc;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
+import java.util.Set;
 
 public interface AppointementServiceInterface {
     List<Appointment> getAppointmentsForDoctorToday(int doctorId);
@@ -23,4 +24,5 @@ public interface AppointementServiceInterface {
     List<Appointment> findAppointmentByDoctor(Doctor doctor);
     List<Appointment> filterAppointments(Doctor doctor,String patientName,LocalDate fromDate,LocalDate toDate);
     Appointment findById(int appointmentId);
+    Set<Patient> getVisitedPatientsByDoctor(Doctor doctor);
 }
