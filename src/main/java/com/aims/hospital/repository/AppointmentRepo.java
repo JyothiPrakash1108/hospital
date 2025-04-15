@@ -25,6 +25,6 @@ public interface AppointmentRepo extends JpaRepository<Appointment,Integer> {
     List<Appointment> findByDoctorOrderByLocalDateTimeAsc(Doctor doctor);
     List<Appointment> findByDoctor(Doctor doctor);
     @Query("SELECT DISTINCT a.doctor FROM Appointment a WHERE a.patient.id = :patientId AND a.status = 'COMPLETED'")
-    List<Doctor> findDoctorsByPatientAndStatus(@Param("patientId") Long patientId, @Param("status") AppointmentStatus status);
+    List<Doctor> findDoctorsByPatientAndStatus(@Param("patientId") int patientId, @Param("status") Status status);
 
 }
