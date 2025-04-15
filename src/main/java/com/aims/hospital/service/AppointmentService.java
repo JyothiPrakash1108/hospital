@@ -15,6 +15,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -128,6 +129,19 @@ public class AppointmentService implements AppointementServiceInterface{
     @Override
     public Appointment findById(int appointmentId) {
         return appointmentRepo.findById(appointmentId).orElse(null);
+    }
+
+    @Override
+    public Set<Patient> getVisitedPatientsByDoctor(Doctor doctor) {
+        List<Appointment>  appointments = appointmentRepo.findByDoctor(doctor);
+        return appointments.stream()
+                .map(Appointment :: getPatient)
+                .collect(Collectors.toSet());
+    }
+
+    @Override
+    public List<Doctor> findDoctorsWithCompletedAppointments(Patient patient) {
+        return appointmentRepo.findDoctorsByPatientAndStatus(patient.getId(), Status.COMPLETED);
     }
 
 }

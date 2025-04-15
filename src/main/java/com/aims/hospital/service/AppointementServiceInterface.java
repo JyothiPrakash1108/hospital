@@ -25,4 +25,5 @@ public interface AppointementServiceInterface {
     List<Appointment> filterAppointments(Doctor doctor,String patientName,LocalDate fromDate,LocalDate toDate);
     Appointment findById(int appointmentId);
     Set<Patient> getVisitedPatientsByDoctor(Doctor doctor);
+    List<Doctor> findDoctorsWithCompletedAppointments(Patient patient);
 }
