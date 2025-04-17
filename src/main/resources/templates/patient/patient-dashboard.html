@@ -50,6 +50,51 @@
         .chat-message { margin-bottom: 10px; }
         .chat-message.patient { text-align: right; }
         .chat-message.doctor { text-align: left; }
+
+        #doctorList li:hover {
+            background-color: #e9ecef;
+            cursor: pointer;
+        }
+        .chat-message {
+        margin: 6px 0;
+        display: flex;
+        align-items: flex-end;
+    }
+
+    .chat-message.patient {
+        justify-content: flex-end;
+    }
+
+    .chat-message.doctor {
+        justify-content: flex-start;
+    }
+
+    .chat-bubble {
+        max-width: 70%;
+        padding: 10px 14px;
+        border-radius: 20px;
+        font-size: 14px;
+        line-height: 1.4;
+        word-break: break-word;
+        display: inline-block;
+    }
+
+    .chat-message.patient .chat-bubble {
+        background-color: #007bff;
+        color: white;
+        border-bottom-right-radius: 0;
+    }
+
+    .chat-message.doctor .chat-bubble {
+        background-color: #e9ecef;
+        color: #000;
+        border-bottom-left-radius: 0;
+    }
+
+    #doctorList li.active {
+        background-color: #007bff !important;
+        color: white !important;
+    }
     </style>
 </head>
 <body>
@@ -125,20 +170,24 @@
 </div>
 
 <!-- Chat Modal -->
+<!-- Updated Chat Modal -->
 <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-scrollable modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Chat with Doctor</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <div class="modal-dialog modal-lg modal-dialog-scrollable">
+        <div class="modal-content shadow">
+            <div class="modal-header bg-primary text-white">
+                <h5 class="modal-title"><i class="bi bi-chat-dots"></i> Chat with Your Doctor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div class="modal-body d-flex">
+            <div class="modal-body d-flex p-0" style="height: 400px;">
+
                 <!-- Doctor List -->
-                <div class="w-25 border-end pe-2">
-                    <h6>Doctors</h6>
-                    <ul class="list-group" id="doctorList">
+                <div class="w-25 border-end bg-light">
+                    <div class="p-3 border-bottom">
+                        <h6 class="mb-0"><i class="bi bi-person-lines-fill me-1"></i> Doctors</h6>
+                    </div>
+                    <ul class="list-group list-group-flush" id="doctorList" style="height: 100%; overflow-y: auto;">
                         <li th:each="doctor : ${consultedDoctors}"
-                            class="list-group-item list-group-item-action"
+                            class="list-group-item list-group-item-action border-0"
                             th:text="${doctor.username}"
                             th:attr="data-id=${doctor.id}"
                             onclick="selectDoctor(this)">
@@ -147,17 +196,28 @@
                 </div>
 
                 <!-- Chat Area -->
-                <div class="flex-grow-1 ps-3 d-flex flex-column">
-                    <div id="chatWindow" class="mb-2" style="height: 300px; overflow-y: auto; background: #f0f0f0; border-radius: 5px; padding: 10px;"></div>
-                    <div class="input-group">
-                        <input type="text" id="chatInput" class="form-control" placeholder="Type your message..." disabled>
-                        <button class="btn btn-primary" onclick="sendMessage()" disabled>Send</button>
+                <div class="flex-grow-1 d-flex flex-column">
+                    <!-- Chat History -->
+                    <div id="chatWindow"
+                         class="flex-grow-1 px-3 py-2"
+                         style="overflow-y: auto; background: #f8f9fa;">
+                        <!-- Messages will load here -->
+                    </div>
+
+                    <!-- Input Area -->
+                    <div class="border-top p-2 d-flex align-items-center bg-white">
+                        <input type="text" id="chatInput" class="form-control me-2" placeholder="Type a message..." disabled>
+                        <button class="btn btn-primary" onclick="sendMessage()" disabled>
+                            <i class="bi bi-send"></i> Send
+                        </button>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>
 </div>
+
 
 <!-- Scripts -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
@@ -198,42 +258,72 @@
         loadMessages(); // Load previous chat history
     }
 
-    function appendMessage(msg) {
-        const chatWindow = document.getElementById("chatWindow");
-        const msgElem = document.createElement("div");
-        msgElem.className = `chat-message ${msg.sender === 'PATIENT' ? 'patient' : 'doctor'}`;
-        msgElem.innerHTML = `<span class="badge bg-${msg.sender === 'PATIENT' ? 'primary' : 'secondary'}">${msg.content}</span>`;
-        chatWindow.appendChild(msgElem);
-        chatWindow.scrollTop = chatWindow.scrollHeight;
+function appendMessage(msg) {
+    const chatWindow = document.getElementById("chatWindow");
+    const messageElement = document.createElement("div");
+
+    // Check if the message is SENT (patient) or RECEIVED (doctor)
+    const isSentByPatient = msg.sender === "PATIENT"; // Adjust based on your sender values
+
+    messageElement.className = `d-flex justify-content-${isSentByPatient ? "end" : "start"} mb-2`;
+    messageElement.innerHTML = `
+        <div class="card ${isSentByPatient ? "bg-primary text-white" : "bg-light"}">
+            <div class="card-body p-2">
+                <p class="card-text mb-0">${msg.content}</p>
+                <small class="text-muted">${new Date(msg.timestamp).toLocaleTimeString()}</small>
+            </div>
+        </div>
+    `;
+    chatWindow.appendChild(messageElement);
+    chatWindow.scrollTop = chatWindow.scrollHeight; // Auto-scroll to latest message
+}
+
+
+
+function loadMessages() {
+    if (!selectedDoctorId) {
+        console.error("No doctor selected!");
+        return;
     }
 
-    function loadMessages() {
-        if (!selectedDoctorId) return;
-        fetch(`/chat/messages?doctorId=${selectedDoctorId}`)
-            .then(response => response.json())
-            .then(messages => {
-                const chatWindow = document.getElementById("chatWindow");
-                chatWindow.innerHTML = "";
-                messages.forEach(appendMessage);
-            });
-    }
+    fetch(`/chat/messages?selectedDoctorId=${selectedDoctorId}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error(`HTTP error! Status: ${response.status}`);
+            }
+            return response.json();
+        })
+        .then(messages => {
+            const chatWindow = document.getElementById("chatWindow");
+            chatWindow.innerHTML = "";
+            messages.forEach(msg => appendMessage(msg));
+        })
+        .catch(error => {
+            console.error("Fetch error:", error);
+            alert("Failed to load messages. Check console for details.");
+        });
+}
 
-    function sendMessage() {
-        const input = document.getElementById("chatInput");
-        const message = input.value.trim();
-        if (!message || !selectedDoctorId) return;
 
-        const msgObj = {
-            doctorId: selectedDoctorId,
-            content: message
-        };
+function sendMessage() {
+    const input = document.getElementById("chatInput");
+    const content = input.value.trim();
+    console.log("Selected Doctor ID:", selectedDoctorId);
+    if (content === '' || !selectedDoctorId) return;
+
+    const message = {
+        doctor: { id: parseInt(selectedDoctorId) },
+        sender: "PATIENT",
+        content: content,
+        timestamp: new Date().toISOString()
+    };
 
         if (stompClient && stompClient.connected) {
-            stompClient.send("/app/chat", {}, JSON.stringify(msgObj));
+            stompClient.send("/app/chat", {}, JSON.stringify(message));
         }
-
-        input.value = "";
-    }
+    appendMessage(message); // Show immediately on UI
+    input.value = "";
+}
 
     // Auto-connect WebSocket on modal open
     document.getElementById('chatModal').addEventListener('shown.bs.modal', () => {
@@ -241,6 +331,12 @@
             connectWebSocket();
         }
     });
+
+    function scrollChatToBottom() {
+    const chatWindow = document.getElementById("chatWindow");
+    chatWindow.scrollTop = chatWindow.scrollHeight;
+    }
+
 </script>
 
 </body>

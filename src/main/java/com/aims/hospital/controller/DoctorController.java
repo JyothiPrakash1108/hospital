@@ -1,13 +1,7 @@
 package com.aims.hospital.controller;
 
-import com.aims.hospital.model.Appointment;
-import com.aims.hospital.model.Doctor;
-import com.aims.hospital.model.DoctorAvailability;
-import com.aims.hospital.model.Prescription;
-import com.aims.hospital.service.AppointmentService;
-import com.aims.hospital.service.DoctorAvailabilityService;
-import com.aims.hospital.service.DoctorService;
-import com.aims.hospital.service.PrescriptionService;
+import com.aims.hospital.model.*;
+import com.aims.hospital.service.*;
 import com.aims.hospital.wrapper.DoctorAvailabilityWrapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -41,6 +35,10 @@ public class DoctorController {
     private DoctorAvailabilityService doctorAvailabilityService;
     @Autowired
     private PrescriptionService prescriptionService;
+    @Autowired
+    private ClinicalHistoryService clinicalHistoryService;
+    @Autowired
+    private MedicalReportService medicalReportService;
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAutoGrowNestedPaths(true);
@@ -188,5 +186,19 @@ public class DoctorController {
                 return "";
         }
     }
-
+    @GetMapping("/patients")
+    public String  viewAllPatients(Model model,Principal principal){
+        Doctor doctor = doctorService.findByEmail(principal.getName());
+        Set<Patient> patients = appointmentService.getVisitedPatientsByDoctor(doctor);
+        Map<Integer,List<ClinicalHistory>> clinicalHistoryMap = new HashMap<>();
+        Map<Integer,List<MedicalReport>> medicalReportMap = new HashMap<>();
+        for(Patient patient : patients){
+            clinicalHistoryMap.put(patient.getId(), clinicalHistoryService.getClinicalHistory(patient));
+            medicalReportMap.put(patient.getId(), medicalReportService.getMedicalReport(patient));
+        }
+        model.addAttribute("patients",patients);
+        model.addAttribute("clinicalMap",clinicalHistoryMap);
+        model.addAttribute("reportMap",medicalReportMap);
+        return "doctor/doctor_patients.html";
+    }
 }

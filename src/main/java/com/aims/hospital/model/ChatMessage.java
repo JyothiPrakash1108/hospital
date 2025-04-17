@@ -12,12 +12,12 @@ public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
-    private String message;
+    private String content;
     private String sender;
     private LocalDateTime timestamp;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Doctor doctor;
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     private Patient patient;
 
     public ChatMessage() {
@@ -25,7 +25,7 @@ public class ChatMessage {
 
     public ChatMessage(int id, String message, String sender, LocalDateTime timestamp, Doctor doctor, Patient patient) {
         this.id = id;
-        this.message = message;
+        this.content = message;
         this.sender = sender;
         this.timestamp = timestamp;
         this.doctor = doctor;
@@ -40,12 +40,12 @@ public class ChatMessage {
         this.id = id;
     }
 
-    public String getMessage() {
-        return message;
+    public String getContent() {
+        return content;
     }
 
-    public void setMessage(String message) {
-        this.message = message;
+    public void setContent(String content) {
+        this.content = content;
     }
 
     public String getSender() {

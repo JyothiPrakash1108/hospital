@@ -17,7 +17,7 @@ public class ChatService implements ChatServiceInterface{
     @Override
     public ChatMessage saveMessage(String content, Patient patient, Doctor doctor, String sender) {
         ChatMessage msg = new ChatMessage();
-                msg.setMessage(content);
+                msg.setContent(content);
                 msg.setDoctor(doctor);
                 msg.setPatient(patient);
                 msg.setSender(sender);

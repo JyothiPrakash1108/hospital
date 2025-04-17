@@ -57,7 +57,28 @@
         .dropdown-item {
             white-space: normal;
         }
-    </style>
+        <style>
+    .chat-message {
+        margin: 5px 0;
+        display: flex;
+    }
+
+    .chat-message.doctor {
+        justify-content: flex-end;
+    }
+
+    .chat-message.patient {
+        justify-content: flex-start;
+    }
+
+    .chat-message .badge {
+        padding: 8px 12px;
+        font-size: 14px;
+        border-radius: 12px;
+    }
+</style>
+
+  </style>
 </head>
 <body>
 
@@ -89,10 +110,32 @@
           <div class="d-flex justify-content-between align-items-center">
             <div>
               <h5 th:text="'Patient ID: ' + ${patient.id}"></h5>
-              <h6 th:text="'Name: ' + ${patient.name}"></h6>
+              <h6 th:text="'Name: ' + ${patient.username}"></h6>
             </div>
             <div>
-              <a th:href="@{'/chat/with/' + ${patient.id}}" class="btn btn-primary me-2">Chat</a>
+              <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#chatModal"
+                      th:attr="data-patient-id=${patient.id}, data-patient-name=${patient.username}"
+                      onclick="openChatModal(this)">Chat
+              </button>
+
+              <!-- Chat Modal -->
+              <div class="modal fade" id="chatModal" tabindex="-1" aria-labelledby="chatModalLabel" aria-hidden="true">
+                <div class="modal-dialog modal-dialog-scrollable modal-lg">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h5 class="modal-title">Chat with <span id="chatWithPatientName"></span></h5>
+                      <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body d-flex flex-column">
+                      <div id="chatWindow" style="height: 300px; overflow-y: auto; background: #f0f0f0; border-radius: 5px; padding: 10px;"></div>
+                      <div class="input-group mt-2">
+                        <input type="text" id="chatInput" class="form-control" placeholder="Type your message..." disabled>
+                        <button class="btn btn-primary" onclick="sendMessage()" disabled>Send</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               <!-- Clinical History Dropdown -->
               <div class="btn-group me-2">
@@ -100,14 +143,18 @@
                   Clinical History
                 </button>
                 <ul class="dropdown-menu">
-                  <li th:each="history, iter : ${patient.clinicalHistories}">
+                  <li th:each="history, iter : ${clinicalMap[patient.id]}">
                     <a class="dropdown-item d-flex justify-content-between" th:href="@{'/files/procedure/' + ${history.id}}">
                       <span th:text="${iter.count} + '. ' + ${history.procedureName}"></span>
                       <span>View</span>
                     </a>
                   </li>
+                  <li th:if="${#lists.isEmpty(clinicalMap[patient.id])}">
+                    <span class="dropdown-item text-muted">No clinical history available</span>
+                  </li>
                 </ul>
               </div>
+
 
               <!-- Reports Dropdown -->
               <div class="btn-group">
@@ -115,15 +162,17 @@
                   Lab Reports
                 </button>
                 <ul class="dropdown-menu">
-                  <li th:each="report, iter : ${patient.reports}">
+                  <li th:each="report, iter : ${reportMap[patient.id]}">
                     <a class="dropdown-item d-flex justify-content-between" th:href="@{'/files/report/' + ${report.id}}">
                       <span th:text="${iter.count} + '. ' + ${report.name}"></span>
                       <span>View</span>
                     </a>
                   </li>
+                  <li th:if="${#lists.isEmpty(reportMap[patient.id])}">
+                    <span class="dropdown-item text-muted">No lab reports available</span>
+                  </li>
                 </ul>
               </div>
-
             </div>
           </div>
         </div>
@@ -133,5 +182,96 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1.5.1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+<script>
+    let selectedPatientId = null;
+    let stompClient = null;
+    let doctorId = /*[[${#authentication.principal.id}]]*/ '0'; // Replace with authenticated doctor ID
+
+    function connectWebSocket() {
+        const socket = new SockJS('/ws');
+        stompClient = Stomp.over(socket);
+        stompClient.connect({}, () => {
+            console.log("WebSocket connected");
+
+            // Subscribe to private queue
+            stompClient.subscribe(`/user/${doctorId}/queue/messages`, (message) => {
+                const msg = JSON.parse(message.body);
+                if (msg.patientId == selectedPatientId) {
+                    appendMessage(msg);
+                }
+            });
+        });
+    }
+
+    function openChatModal(button) {
+        selectedPatientId = button.getAttribute("data-patient-id");
+        const patientName = button.getAttribute("data-patient-name");
+
+        document.getElementById("chatWithPatientName").textContent = patientName;
+        document.getElementById("chatInput").disabled = false;
+        document.querySelector("#chatInput + button").disabled = false;
+
+        loadMessages();
+        if (!stompClient || !stompClient.connected) {
+            connectWebSocket();
+        }
+    }
+
+function loadMessages() {
+    if (!selectedPatientId) return;
+    console.log("Fetching messages for patient:", selectedPatientId); // ADD THIS
+    fetch(`/chat/messages?selectedPatientId=${selectedPatientId}`)
+        .then(response => response.json())
+        .then(messages => {
+            console.log("Received messages:", messages); // ADD THIS
+            const chatWindow = document.getElementById("chatWindow");
+            chatWindow.innerHTML = "";
+            messages.forEach(appendMessage);
+        });
+}
+
+
+function appendMessage(msg) {
+    const chatWindow = document.getElementById("chatWindow");
+    const messageElement = document.createElement("div");
+
+    // Check if the message is SENT (doctor) or RECEIVED (patient)
+    const isSentByDoctor = msg.sender === "DOCTOR"; // Adjust based on your sender values
+
+    messageElement.className = `d-flex justify-content-${isSentByDoctor ? "end" : "start"} mb-2`;
+    messageElement.innerHTML = `
+        <div class="card ${isSentByDoctor ? "bg-primary text-white" : "bg-light"}">
+            <div class="card-body p-2">
+                <p class="card-text mb-0">${msg.content}</p>
+                <small class="text-muted">${new Date(msg.timestamp).toLocaleTimeString()}</small>
+            </div>
+        </div>
+    `;
+    chatWindow.appendChild(messageElement);
+}
+function sendMessage() {
+    const input = document.getElementById("chatInput");
+    const message = input.value.trim();
+    if (!message || !selectedPatientId) return;
+
+    const msgObj = {
+        content: message,
+        patient: { id: parseInt(selectedPatientId) },
+        sender: "DOCTOR"
+    };
+
+    if (stompClient && stompClient.connected) {
+        stompClient.send("/app/chat", {}, JSON.stringify(msgObj));
+    }
+
+    // Append the message immediately for the doctor
+    appendMessage(msgObj); // ✅ ADD THIS
+    input.value = "";
+}
+
+</script>
+
 </body>
 </html>

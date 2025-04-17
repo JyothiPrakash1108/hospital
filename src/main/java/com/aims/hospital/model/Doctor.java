@@ -1,5 +1,6 @@
 package com.aims.hospital.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 
 import java.util.List;
@@ -10,9 +11,11 @@ import java.util.List;
 public class Doctor extends User{
     private String department;
     private boolean isAvailable= true;
-    @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "doctor",cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<Appointment> appointments;
-    @OneToMany(mappedBy = "doctor" , cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "doctor" , cascade = CascadeType.ALL,fetch = FetchType.LAZY)
+    @JsonIgnore
     private List<DoctorAvailability> doctorAvailabilities;
 
     public Doctor() {

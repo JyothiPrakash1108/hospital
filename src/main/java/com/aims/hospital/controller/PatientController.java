@@ -1,6 +1,7 @@
 package com.aims.hospital.controller;
 
 
+import com.aims.hospital.model.Doctor;
 import com.aims.hospital.model.Patient;
 import com.aims.hospital.service.AppointmentService;
 import com.aims.hospital.service.DoctorService;
@@ -11,6 +12,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/patient")
@@ -26,9 +29,11 @@ public class PatientController {
     public String getPatientDashboard(Model model, Principal principal) {
         String email = principal.getName();
         Patient patient = patientService.findPatientByEmail(email);
+        Set<Doctor> doctors = new HashSet<>(appointmentService.findDoctorsWithCompletedAppointments(patient));
         model.addAttribute("upcomingAppointments", appointmentService.countUpcomingAppointments(patient.getId()));
         model.addAttribute("pastAppointments", appointmentService.countPastAppointments(patient.getId()));
         model.addAttribute("appointments", appointmentService.getAppointmentsByPatientId(patient.getId()));
+        model.addAttribute("consultedDoctors",doctors);
         return "/patient/patient-dashboard.html";
     }
     @GetMapping("/book-appointment")
